@@ -6,4 +6,4 @@
 #     cleaner_names = [x.strip() for x in hparams.cleaners.split(',')]
 #     seq = text_to_sequence(text, cleaner_names)
 #     return text
-# print(Sy('danh mục đầu tư (so với các mn)'))
+# print(Sy('dang mục đầu tư (so với các mn)'))

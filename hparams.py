@@ -1,7 +1,7 @@
 import tensorflow as tf
 
 
-# Default hyperparameters:
+# Default hyper parameters:
 hparams = tf.contrib.training.HParams(
   # Comma-separated list of cleaners to run on text prior to training and eval. For non-English
   # text, you may want to use "basic_cleaners" or "transliteration_cleaners" See TRAINING_DATA.md.
@@ -42,6 +42,6 @@ hparams = tf.contrib.training.HParams(
 
 
 def hparams_debug_string():
-  values = hparams.values()
-  hp = ['  %s: %s' % (name, values[name]) for name in sorted(values)]
-  return 'Hyperparameters:\n' + '\n'.join(hp)
+    values = hparams.values()
+    hp = ['  %s: %s' % (name, values[name]) for name in sorted(values)]
+    return 'Hyperparameters:\n' + '\n'.join(hp)

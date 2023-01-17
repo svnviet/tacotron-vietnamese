@@ -15,7 +15,7 @@ class Tacotron():
 
 
   def initialize(self, inputs, input_lengths, mel_targets=None, linear_targets=None):
-    '''Initializes the model for inference.
+    """Initializes the model for inference.
 
     Sets "mel_outputs", "linear_outputs", and "alignments" fields.
 
@@ -30,7 +30,7 @@ class Tacotron():
       linear_targets: float32 Tensor with shape [N, T_out, F] where N is batch_size, T_out is number
         of steps in the output time series, F is num_freq, and values are entries in the linear
         spectrogram. Only needed for training.
-    '''
+    """
     with tf.variable_scope('inference') as scope:
       is_training = linear_targets is not None
       batch_size = tf.shape(inputs)[0]
