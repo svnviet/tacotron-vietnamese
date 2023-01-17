@@ -59,49 +59,52 @@ function synthesize(text) {
 '''
 
 
+def on_get(req, res):
+    res.content_type = 'text/html'
+    res.body = html_body
+
+
 class UIResource:
-    def on_get(self, req, res):
-        res.content_type = 'text/html'
-        res.body = html_body
+    """ UI Resource for Flask template """
+    def __init__(self):
+        pass
 
 
 class SynthesisResource:
     def on_get(self, req, res):
         if not req.params.get('text'):
             raise falcon.HTTPBadRequest()
-        count=0
-        Rc=(r'.')
-        ch=(r':;()=+_-')
-        sentences=(req.params.get('text').split('.'))
+        count = 0
+        Rc = r'.'
+        ch = r':;()=+_-'
+        sentences = (req.params.get('text').split('.'))
 
-        base_path =r'D:\tacotron_tensorflow-master\tacotron\testckpt\e\\'
-        for i,text in enumerate(sentences):
+        base_path = r"D:\tacotron_tensorflow-master\tacotron\testckpt\e\\"
+        for i, text in enumerate(sentences):
 
             for k in ch:
-                text= text.replace(k,',')
+                text = text.replace(k, ',')
 
             for j in Rc:
-                text=text.replace(j,'')
-
+                text = text.replace(j, '')
 
             for r_text in text.split(','):
-                if len(r_text)>=1:
-                    count+=1
-                    path = '%s%04d.wav' % (base_path,count )
-
+                if len(r_text) >= 1:
+                    count += 1
+                    path = '%s%04d.wav' % (base_path, count)
                     with open(path, 'wb') as f:
                         f.write(synthesizer.synthesize(r_text))
+                        
         Dir = os.listdir(base_path)
-        Audio_resul=AudioSegment.silent()
+        Audio_resul = AudioSegment.silent()
         for i in (Dir):
             sound_synthe = AudioSegment.from_wav(base_path+i) + AudioSegment.silent(duration=350)
-            Audio_resul +=sound_synthe
+            Audio_resul += sound_synthe
         # speed=1.5
         # Audio_resul = Audio_resul._spawn(Audio_resul.raw_data, overrides={
         #              "frame_rate": int(Audio_resul.frame_rate * speed)})
         # Audio_resul = Audio_resul.set_frame_rate(Audio_resul.frame_rate)
         # Audio_resul.export("path10.wav", format="wav")
-
 
         for i in (Dir):
             if os.path.exists(base_path+i):
@@ -118,20 +121,19 @@ api = falcon.API()
 api.add_route('/synthesize', SynthesisResource())
 api.add_route('/', UIResource())
 
-
 if __name__ == '__main__':
-  from wsgiref import simple_server
-  parser = argparse.ArgumentParser()
-  parser.add_argument('--checkpoint', default=r'D:\tacotron_tensorflow-master\tacotron\testckpt\model.ckpt-366000')
-  parser.add_argument('--port', type=int, default=9000)
-  parser.add_argument('--hparams', default='',
-    help='Hyperparameter overrides as a comma-separated list of name=value pairs')
-  args = parser.parse_args()
-  os.environ['TF_CPP_MIN_LOG_LEVEL'] ='3'
-  hparams.parse(args.hparams)
-  print(hparams_debug_string())
-  synthesizer.load(args.checkpoint)
-  print('Serving on port %d' % args.port)
-  simple_server.make_server('0.0.0.0', args.port, api).serve_forever()
+    from wsgiref import simple_server
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--checkpoint', default=r'D:\tacotron_tensorflow-master\tacotron\testckpt\model.ckpt-366000')
+    parser.add_argument('--port', type=int, default=9000)
+    parser.add_argument('--hparams', default='',
+                        help='Hyperparameter overrides as a comma-separated list of name=value pairs')
+    args = parser.parse_args()
+    os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+    hparams.parse(args.hparams)
+    print(hparams_debug_string())
+    synthesizer.load(args.checkpoint)
+    print('Serving on port %d' % args.port)
+    simple_server.make_server('0.0.0.0', args.port, api).serve_forever()
 else:
-  synthesizer.load(os.environ['CHECKPOINT'])
+    synthesizer.load(os.environ['CHECKPOINT'])
