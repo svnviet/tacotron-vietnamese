@@ -39,7 +39,22 @@ _abbreviations = [(re.compile('\\b%s\\.' % x[0], re.IGNORECASE), x[1]) for x in 
   ('col', 'colonel'),
   ('ft', 'fort'),
 ]]
-
+def remove_unknow(text):
+  with open(r'text//all_words.txt','r',encoding='utf8') as f:
+    text = lowercase(text)
+    words_in=f.read().split(',')
+    words=text.split(' ')
+# lengh <5
+    for i,word in enumerate(words):
+      if word not in words_in:
+        words.pop(i)
+    return ' '.join(words)
+def remove_Rc(text):
+    Rc=(r' aăâbcdđeêghiklmnoơôpqrstuưvxyfjwzáắấéếíóốớúứýàằấầèềìòồờùừỳảẳẩẻểỉỏổởủửỷãẵẫẽễĩõỗỡũữỹạặậẹệịọộợụựỵ:;()><~!@#^%$*_+}{|\/?')
+    for i in set(text):
+        if i not in Rc:
+            text=text.replace(i,'')
+    return text
 
 def expand_abbreviations(text):
   for regex, replacement in _abbreviations:
@@ -54,10 +69,8 @@ def expand_numbers(text):
 def lowercase(text):
   return text.lower()
 
-
 def collapse_whitespace(text):
   return re.sub(_whitespace_re, ' ', text)
-
 
 def convert_to_ascii(text):
   return unidecode(text)
@@ -67,6 +80,8 @@ def basic_cleaners(text):
   '''Basic pipeline that lowercases and collapses whitespace without transliteration.'''
   text = lowercase(text)
   text = collapse_whitespace(text)
+  text = remove_Rc(text)
+  text = remove_unknow(text)
   return text
 
 

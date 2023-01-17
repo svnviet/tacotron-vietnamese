@@ -29,7 +29,7 @@ def spectrogram(y):
   S = _amp_to_db(np.abs(D)) - hparams.ref_level_db
   return _normalize(S)
 
-
+# amplitude_to_db
 def inv_spectrogram(spectrogram):
   '''Converts spectrogram to waveform using librosa'''
   S = _db_to_amp(_denormalize(spectrogram) + hparams.ref_level_db)  # Convert back to linear

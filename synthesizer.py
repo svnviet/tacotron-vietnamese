@@ -1,6 +1,9 @@
 import io
 import numpy as np
 import tensorflow as tf
+
+tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
+
 from hparams import hparams
 from librosa import effects
 from models import create_model
@@ -10,7 +13,7 @@ from util import audio
 
 class Synthesizer:
   def load(self, checkpoint_path, model_name='tacotron'):
-    print('Constructing model: %s' % model_name)
+   # print('Constructing model: %s' % model_name)
     inputs = tf.placeholder(tf.int32, [1, None], 'inputs')
     input_lengths = tf.placeholder(tf.int32, [1], 'input_lengths')
     with tf.variable_scope('model') as scope:
@@ -18,8 +21,10 @@ class Synthesizer:
       self.model.initialize(inputs, input_lengths)
       self.wav_output = audio.inv_spectrogram_tensorflow(self.model.linear_outputs[0])
 
-    print('Loading checkpoint: %s' % checkpoint_path)
-    self.session = tf.Session()
+   # print('Loading checkpoint: %s' % checkpoint_path)
+    config = tf.ConfigProto()
+    config.gpu_options.allow_growth = True
+    self.session = tf.Session(config=config)
     self.session.run(tf.global_variables_initializer())
     saver = tf.train.Saver()
     saver.restore(self.session, checkpoint_path)
@@ -27,6 +32,7 @@ class Synthesizer:
 
   def synthesize(self, text):
     cleaner_names = [x.strip() for x in hparams.cleaners.split(',')]
+    print(text)
     seq = text_to_sequence(text, cleaner_names)
     feed_dict = {
       self.model.inputs: [np.asarray(seq, dtype=np.int32)],

@@ -95,7 +95,17 @@ def train(log_dir, args):
         message = 'Step %-7d [%.03f sec/step, loss=%.05f, avg_loss=%.05f]' % (
           step, time_window.average, loss, loss_window.average)
         log(message, slack=(step % args.checkpoint_interval == 0))
-
+	#	if loss <=0.06:
+	#	  log('Saving checkpoint to: %s-%d' % (checkpoint_path, step))
+     #     saver.save(sess, checkpoint_path, global_step=step)
+     #     log('Saving audio and alignment...')
+      #    input_seq, spectrogram, alignment = sess.run([
+       #           model.inputs[0], model.linear_outputs[0], model.alignments[0]])
+        #  waveform = audio.inv_spectrogram(spectrogram.T)
+         # audio.save_wav(waveform, os.path.join(log_dir, 'step-%d-audio.wav' % step))
+          #plot.plot_alignment(alignment, os.path.join(log_dir, 'step-%d-align.png' % step),
+           #              info='%s, %s, %s, step=%d, loss=%.5f' % (args.model, commit, time_string(), step, loss))
+          #log('Input: %s' % sequence_to_text(input_seq))
         if loss > 100 or math.isnan(loss):
           log('Loss exploded to %.05f at step %d!' % (loss, step), slack=True)
           raise Exception('Loss Exploded')
@@ -125,7 +135,7 @@ def train(log_dir, args):
 def main():
   parser = argparse.ArgumentParser()
   parser.add_argument('--base_dir', default=os.path.expanduser('~/tacotron'))
-  parser.add_argument('--input', default='training/train.txt')
+  parser.add_argument('--input', default=r'D:/tacotron_tensorflow-master/tacotron/training/train.txt')
   parser.add_argument('--model', default='tacotron')
   parser.add_argument('--name', help='Name of the run. Used for logging. Defaults to model name.')
   parser.add_argument('--hparams', default='',
@@ -141,7 +151,7 @@ def main():
   args = parser.parse_args()
   os.environ['TF_CPP_MIN_LOG_LEVEL'] = str(args.tf_log_level)
   run_name = args.name or args.model
-  log_dir = os.path.join(args.base_dir, 'logs-%s' % run_name)
+  log_dir = (r'D:/tacotron_tensorflow-master/tacotron/'+ 'logs-%s' % run_name)
   os.makedirs(log_dir, exist_ok=True)
   infolog.init(os.path.join(log_dir, 'train.log'), run_name, args.slack_url)
   hparams.parse(args.hparams)

@@ -1,7 +1,7 @@
 import re
 from text import cleaners
 from text.symbols import symbols
-
+from text.cleaners import basic_cleaners
 
 # Mappings from symbol to numeric ID and vice versa:
 _symbol_to_id = {s: i for i, s in enumerate(symbols)}
@@ -25,7 +25,7 @@ def text_to_sequence(text, cleaner_names):
       List of integers corresponding to the symbols in the text
   '''
   sequence = []
-
+  text = basic_cleaners(text)
   # Check for curly braces and treat their contents as ARPAbet:
   while len(text):
     m = _curly_re.match(text)
